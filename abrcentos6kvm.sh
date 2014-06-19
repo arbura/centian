@@ -85,27 +85,27 @@ echo "screenfetch" >> .profile
 
 # install webserver
 cd
-wget -O /etc/nginx/nginx.conf "http://arbura.info/auto/debian7/centian/nginx.conf"
+wget -O /etc/nginx/nginx.conf "https://raw.github.com/arbura/centian/master/nginx.conf"
 sed -i 's/www-data/nginx/g' /etc/nginx/nginx.conf
 mkdir -p /home/vps/public_html
 echo "<pre>Setup by arbura(dot)info</pre>" > /home/vps/public_html/index.html
 echo "<?php phpinfo(); ?>" > /home/vps/public_html/info.php
 rm /etc/nginx/conf.d/*
-wget -O /etc/nginx/conf.d/vps.conf "http://arbura.info/auto/debian7/centian/vps.conf"
+wget -O /etc/nginx/conf.d/vps.conf "https://raw.github.com/arbura/centian/master/vps.conf"
 sed -i 's/apache/nginx/g' /etc/php-fpm.d/www.conf
 chmod -R +rx /home/vps
 service php-fpm restart
 service nginx restart
 
 # install openvpn
-wget -O /etc/openvpn/openvpn.tar "http://arbura.info/auto/debian7/centian/openvpn-debian.tar"
+wget -O /etc/openvpn/openvpn.tar "https://raw.github.com/arbura/centian/master/openvpn-debian.tar"
 cd /etc/openvpn/
 tar xf openvpn.tar
-wget -O /etc/openvpn/1194.conf "http://arbura.info/auto/debian7/centian/1194-centos.conf"
+wget -O /etc/openvpn/1194.conf "https://raw.github.com/arbura/centian/master/1194-centos.conf"
 if [ "$OS" == "x86_64" ]; then
-  wget -O /etc/openvpn/1194.conf "http://arbura.info/auto/debian7/centian/1194-centos64.conf"
+  wget -O /etc/openvpn/1194.conf "https://raw.github.com/arbura/centian/master/1194-centos64.conf"
 fi
-wget -O /etc/iptables.up.rules "http://arbura.info/auto/debian7/centian/iptables.up.rules"
+wget -O /etc/iptables.up.rules "https://raw.github.com/arbura/centian/master/iptables.up.rules"
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.local
 sed -i '$ i\iptables-restore < /etc/iptables.up.rules' /etc/rc.d/rc.local
 sed -i $MYIP2 /etc/iptables.up.rules;
@@ -119,7 +119,7 @@ cd
 
 # configure openvpn client config
 cd /etc/openvpn/
-wget -O /etc/openvpn/1194-client.ovpn "http://arbura.info/auto/debian7/centian/1194-client.conf"
+wget -O /etc/openvpn/1194-client.ovpn "https://raw.github.com/arbura/centian/master/1194-client.conf"
 sed -i $MYIP2 /etc/openvpn/1194-client.ovpn;
 PASS=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 15 | head -n 1`;
 useradd -M -s /bin/false arbura
@@ -131,9 +131,9 @@ cp client.tar /home/vps/public_html/
 cd
 
 # install badvpn
-wget -O /usr/bin/badvpn-udpgw "http://arbura.info/auto/debian7/centian/badvpn-udpgw"
+wget -O /usr/bin/badvpn-udpgw "https://raw.github.com/arbura/centian/master/badvpn-udpgw"
 if [ "$OS" == "x86_64" ]; then
-  wget -O /usr/bin/badvpn-udpgw "http://arbura.info/auto/debian7/centian/badvpn-udpgw64"
+  wget -O /usr/bin/badvpn-udpgw "https://raw.github.com/arbura/centian/master/badvpn-udpgw64"
 fi
 sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/rc.local
 sed -i '$ i\screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300' /etc/rc.d/rc.local
@@ -142,15 +142,15 @@ screen -AmdS badvpn badvpn-udpgw --listen-addr 127.0.0.1:7300
 
 # install mrtg
 cd /etc/snmp/
-wget -O /etc/snmp/snmpd.conf "http://arbura.info/auto/debian7/centian/snmpd.conf"
-wget -O /root/mrtg-mem.sh "http://arbura.info/auto/debian7/centian/mrtg-mem.sh"
+wget -O /etc/snmp/snmpd.conf "https://raw.github.com/arbura/centian/master/snmpd.conf"
+wget -O /root/mrtg-mem.sh "https://raw.github.com/arbura/centian/master/mrtg-mem.sh"
 chmod +x /root/mrtg-mem.sh
 service snmpd restart
 chkconfig snmpd on
 snmpwalk -v 1 -c public localhost | tail
 mkdir -p /home/vps/public_html/mrtg
 cfgmaker --zero-speed 100000000 --global 'WorkDir: /home/vps/public_html/mrtg' --output /etc/mrtg/mrtg.cfg public@localhost
-curl "http://arbura.info/auto/debian7/centian/mrtg.conf" >> /etc/mrtg/mrtg.cfg
+curl "https://raw.github.com/arbura/centian/master/mrtg.conf" >> /etc/mrtg/mrtg.cfg
 sed -i 's/WorkDir: \/var\/www\/mrtg/# WorkDir: \/var\/www\/mrtg/g' /etc/mrtg/mrtg.cfg
 sed -i 's/# Options\[_\]: growright, bits/Options\[_\]: growright/g' /etc/mrtg/mrtg.cfg
 indexmaker --output=/home/vps/public_html/mrtg/index.html /etc/mrtg/mrtg.cfg
@@ -194,7 +194,7 @@ chkconfig fail2ban on
 
 # install squid
 yum -y install squid
-wget -O /etc/squid/squid.conf "http://arbura.info/auto/debian7/centian/squid-centos.conf"
+wget -O /etc/squid/squid.conf "https://raw.github.com/arbura/centian/master/squid-centos.conf"
 sed -i $MYIP2 /etc/squid/squid.conf;
 service squid restart
 chkconfig squid on
@@ -209,42 +209,42 @@ chkconfig webmin on
 
 # pasang bmon
 if [ "$OS" == "x86_64" ]; then
-  wget -O /usr/bin/bmon "http://arbura.info/auto/debian7/centian/bmon64"
+  wget -O /usr/bin/bmon "https://raw.github.com/arbura/centian/master/bmon64"
 else
-  wget -O /usr/bin/bmon "http://arbura.info/auto/debian7/centian/bmon"
+  wget -O /usr/bin/bmon "https://raw.github.com/arbura/centian/master/bmon"
 fi
 chmod +x /usr/bin/bmon
 
 # downlaod script
 cd
-wget -O speedtest_cli.py "http://arbura.info/auto/debian7/centian/speedtest_cli.py"
-wget -O bench-network.sh "http://arbura.info/auto/debian7/centian/bench-network.sh"
-wget -O ps_mem.py "http://arbura.info/auto/debian7/centian/ps_mem.py"
-wget -O dropmon "http://arbura.info/auto/debian7/centian/dropmon"
-wget -O opmon "http://arbura.info/auto/debian7/centian/opmon"
-wget -O user-login.sh "http://arbura.info/auto/debian7/centian/user-login.sh"
-wget -O user-expired.sh "http://arbura.info/auto/debian7/centian/user-expired.sh"
-wget -O user-limit-dp.sh "http://arbura.info/auto/debian7/centian/user-limit-dp.sh"
-wget -O user-limit-op.sh "http://arbura.info/auto/debian7/centian/user-limit-op.sh"
-wget -O autokill.sh "http://arbura.info/auto/debian7/centian/autokill.sh"
-echo "0 0 * * * root /root/user-expired.sh" > /etc/cron.d/user-expired
-echo "0 0 * * * root /root/user-limit-dp.sh" > /etc/cron.d/user-limit-dp
-echo "0 0 * * * root /root/user-limit-op.sh" > /etc/cron.d/user-limit-op
-echo "0 0 * * * root /root/autokill.sh" > /etc/cron.d/autokill
-sed -i '$ i\screen -AmdS check /root/user-expired.sh' /etc/rc.local
-sed -i '$ i\screen -AmdS check /root/user-limit-dp.sh' /etc/rc.local
-sed -i '$ i\screen -AmdS check /root/user-limit-op.sh' /etc/rc.local
-sed -i '$ i\screen -AmdS check /root/autokill.sh' /etc/rc.local
+wget -O speedtest_cli.py "https://raw.github.com/arbura/centian/master/speedtest_cli.py"
+wget -O bench-network.sh "https://raw.github.com/arbura/centian/master/bench-network.sh"
+wget -O ps_mem.py "https://raw.github.com/arbura/centian/master/ps_mem.py"
+wget -O dropmon "https://raw.github.com/arbura/centian/master/dropmon"
+wget -O opmon "https://raw.github.com/arbura/centian/master/opmon"
+wget -O user-login.sh "https://raw.github.com/arbura/centian/master/userlogin.sh"
+wget -O user-expired.sh "https://raw.github.com/arbura/centian/master/userexpired.sh"
+wget -O user-limit-dp.sh "https://raw.github.com/arbura/centian/master/userlimitdp.sh"
+wget -O user-limit-op.sh "https://raw.github.com/arbura/centian/master/userlimitop.sh"
+#wget -O autokill.sh "https://raw.github.com/arbura/centian/master/autokill.sh"
+echo "0 0 * * * root /root/user-expired.sh" > /etc/cron.d/userexpired
+echo "0 0 * * * root /root/user-limit-dp.sh" > /etc/cron.d/userlimitdp
+echo "0 0 * * * root /root/user-limit-op.sh" > /etc/cron.d/userlimitop
+#echo "0 0 * * * root /root/autokill.sh" > /etc/cron.d/autokill
+sed -i '$ i\screen -AmdS check /root/userexpired.sh' /etc/rc.local
+sed -i '$ i\screen -AmdS check /root/userlimitdp.sh' /etc/rc.local
+sed -i '$ i\screen -AmdS check /root/userlimitop.sh' /etc/rc.local
+#sed -i '$ i\screen -AmdS check /root/autokill.sh' /etc/rc.local
 chmod +x speedtest_cli.py
 chmod +x bench-network.sh
 chmod +x ps_mem.py
 chmod +x dropmon
 chmod +x opmon
-chmod +x user-login.sh
-chmod +x user-expired.sh
-chmod +x user-limit-dp.sh
-chmod +x user-limit-op.sh
-chmod +x autokill.sh
+chmod +x userlogin.sh
+chmod +x userexpired.sh
+chmod +x userlimitdp.sh
+chmod +x userlimitop.sh
+#chmod +x autokill.sh
 
 # cron
 service crond start
@@ -301,11 +301,11 @@ echo "screenfetch"  | tee -a log-install.txt
 echo "./ps_mem.py"  | tee -a log-install.txt
 echo "./speedtest_cli.py --share"  | tee -a log-install.txt
 echo "./bench-network.sh"  | tee -a log-install.txt
-echo "./user-login.sh"  | tee -a log-install.txt
-echo "./user-expired.sh" | tee -a log-install.txt
-echo "./user-limit-dp.sh 2" | tee -a log-install.txt
-echo "./user-limit-op.sh 2" | tee -a log-install.txt
-echo "./autokill.sh" | tee -a log-install.txt
+echo "./userlogin.sh"  | tee -a log-install.txt
+echo "./userexpired.sh" | tee -a log-install.txt
+echo "./userlimitdp.sh 2" | tee -a log-install.txt
+echo "./userlimitop.sh 2" | tee -a log-install.txt
+#echo "./autokill.sh" | tee -a log-install.txt
 echo "sh dropmon [port] contoh: sh dropmon 443" | tee -a log-install.txt
 echo "sh opmon [port] contoh: sh dropmon 143" | tee -a log-install.txt
 echo ""  | tee -a log-install.txt
